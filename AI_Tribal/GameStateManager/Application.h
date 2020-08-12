@@ -14,6 +14,8 @@ public:
 	void Update(float deltaTime);
 	void Draw();
 
+	void Close();
+
 	GameStateManager* GetGameStateManager()
 	{
 		return m_gameStateManager;
@@ -27,7 +29,7 @@ private:
 
 	int m_windowWidth;
 	int m_windowHeight;
-
+	bool m_shouldClose = false;
 	GameStateManager* m_gameStateManager = nullptr;
 
 };

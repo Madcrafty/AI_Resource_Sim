@@ -3,7 +3,8 @@
 #include "Application.h"
 #include "raylib.h"
 #include "Button.h"
-
+#include "GameStateManager.h"
+//#include "SplashState.h"
 #include "raygui.h"
 
 #include <iostream>
@@ -20,13 +21,21 @@ MenuState::~MenuState()
 void MenuState::Load()
 {
 	std::cout << "LOADING MENU" << std::endl;
-    m_button1 = LoadTexture("./Sprites/big_play1.png");
-	m_button2 = LoadTexture("./Sprites/big_play2.png");
-	m_play = new Button(" ", &m_button1, &m_button2, Rectangle{m_app->GetWindowWidth()/2 - m_boxWidth, m_app->GetWindowHeight()/2 - m_boxHeight, m_boxWidth, m_boxHeight});
-	m_play->OnClick({
-		m_gameStateManager->SetState("Splash", new SplashState(this));
-		m_gameStateManager->PushState("Splash");
-		});
+    m_play1 = LoadTexture("./Sprites/big_play1.png");
+	m_play2 = LoadTexture("./Sprites/big_play2.png");
+	m_play = new Button(" ", &m_play1, &m_play2, Rectangle{m_app->GetWindowWidth()/2 - m_boxWidth/2, m_app->GetWindowHeight() / 2 - m_boxHeight/2, m_boxWidth, m_boxHeight});
+	m_play->OnClick([=](){
+		//m_app->GetGameStateManager()->SetState("Splash", new SplashState(m_app));
+		m_app->GetGameStateManager()->PopState();
+		m_app->GetGameStateManager()->PushState("Play");
+	});
+
+	m_exit1 = LoadTexture("./Sprites/big_exit1.png");
+	m_exit2 = LoadTexture("./Sprites/big_exit2.png");
+	m_exit = new Button(" ", &m_exit1, &m_exit2, Rectangle{ m_app->GetWindowWidth() / 2 - m_boxWidth / 2, m_app->GetWindowHeight() / 2 + m_boxHeight / 2, m_boxWidth, m_boxHeight });
+	m_exit->OnClick([=]() {
+		m_app->Close();
+	});
 }
 void MenuState::Unload()
 {
@@ -36,9 +45,11 @@ void MenuState::Unload()
 void MenuState::Update(float dt)
 {
 	m_play->Update();
+	m_exit->Update();
 }
 void MenuState::Draw()
 {
-	DrawText("Memes", 10, 10, 20, RED);
+	DrawText("Memes", m_app->GetWindowWidth() / 2 - /*text offset*/ 30, m_app->GetWindowHeight() / 4, 20, RED);
 	m_play->Draw();
+	m_exit->Draw();
 }

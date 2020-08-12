@@ -4,6 +4,9 @@
 #include "IGameState.h"
 #include "SplashState.h"
 #include "MenuState.h"
+#include "PlayState.h"
+#include "PauseState.h"
+
 Application::Application(int windowWidth, int windowHeight) :
 	m_windowWidth(windowWidth), m_windowHeight(windowHeight)
 {
@@ -22,6 +25,8 @@ void Application::Run()
 	m_gameStateManager = new GameStateManager();
 	m_gameStateManager->SetState("Splash", new SplashState(this)); // Load()
 	m_gameStateManager->SetState("Menu", new MenuState(this)); // Load()
+	m_gameStateManager->SetState("Play", new PlayState(this)); // Load()
+	m_gameStateManager->SetState("Pause", new PauseState(this)); // Load()
 
 	//m_gameStateManager->SetState("Menu", nullptr); // Unload()
 	//m_gameStateManager->SetState("Play", new PlayState());
@@ -38,7 +43,7 @@ void Application::Run()
 
 	//m_gameStateManager->PushState("Pause");
 
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    while (!WindowShouldClose() &&  !m_shouldClose)    // Detect window close button or ESC key
     {
 		float dt = GetFrameTime();
 		Update(dt);
@@ -61,4 +66,9 @@ void Application::Draw()
 	m_gameStateManager->Draw();
 
 	EndDrawing();
+}
+
+void Application::Close()
+{
+	m_shouldClose = true;
 }

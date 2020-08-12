@@ -15,6 +15,9 @@ public:
 	void Update(float deltaTime);
 	void Draw();
 
+	IGameState* GetActiveState();
+	IGameState* GetState(const char* name);
+
 	void SetState(const char* name, IGameState* state);
 	void PushState(const char* name);
 	void PopState();

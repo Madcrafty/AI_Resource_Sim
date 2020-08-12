@@ -25,8 +25,9 @@ void Button::Update()
 }
 void Button::Draw()
 {
-    auto color = m_mouseOver ? WHITE : WHITE;
-    DrawRectangle(m_rect.x, m_rect.y, m_rect.width, m_rect.height, color);
+    Color blank = Color{ 0,0,0,0 };
+    auto color = m_mouseOver ? blank : blank;
+    DrawRectangle(m_rect.x, m_rect.y, m_rect.width, m_rect.height, blank);
     auto& tex = m_mouseOver ? m_hover : m_default;
     DrawTexture(*tex, m_rect.x, m_rect.y, WHITE);
     DrawText(m_text.c_str(), m_rect.x, m_rect.y, 24, BLACK);

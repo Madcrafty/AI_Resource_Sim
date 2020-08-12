@@ -2,17 +2,16 @@
 
 #include "IGameState.h"
 #include "raylib.h"
-#include "Button.h"
 
 class Application;
 class Button;
 
-class MenuState : public IGameState
+class PauseState : public IGameState
 {
 public:
 
-	MenuState(Application* app);
-	virtual ~MenuState();
+	PauseState(Application* app);
+	virtual ~PauseState();
 
 	virtual void Load();
 	virtual void Unload();
@@ -24,6 +23,8 @@ protected:
 private:
 
 	Application* m_app;
+
+	Texture2D m_pause;
 
 	Texture2D m_play1;
 	Texture2D m_play2;

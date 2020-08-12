@@ -71,3 +71,16 @@ void GameStateManager::PopState()
 	});
 
 }
+
+IGameState* GameStateManager::GetActiveState()
+{
+	return m_stack.back();
+}
+IGameState* GameStateManager::GetState(const char* name)
+{
+	auto iter = m_states.find(name);
+	if (iter == m_states.end())
+		return nullptr;
+
+	return iter->second;
+}
