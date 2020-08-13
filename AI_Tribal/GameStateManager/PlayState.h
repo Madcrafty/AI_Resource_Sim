@@ -3,6 +3,8 @@
 #include "IGameState.h"
 #include "raylib.h"
 
+class Graph2D;
+class Graph2DEditor;
 class Application;
 
 class PlayState : public IGameState
@@ -22,6 +24,11 @@ protected:
 private:
 
 	Application* m_app;
+	Texture2D m_map;
+	Camera2D m_camera;
+	Graph2D* m_graph;
+	Graph2DEditor* m_graphEditor;
+
 
 // player
 // map
