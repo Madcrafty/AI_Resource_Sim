@@ -15,5 +15,5 @@ public:
 	int GetRange();
 
 private:
-	int m_connectRange = 71;
+	int m_connectRange = 91;
 };

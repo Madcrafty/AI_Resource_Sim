@@ -1,5 +1,8 @@
 #include "PlayState.h"
 #include "Application.h"
+#include "SeekBehaviour.h"
+#include "FleeBehaviour.h"
+#include "WanderBehaviour.h"
 #include "Graph2D.h"
 #include "Graph2DEditor.h"
 #include "GameStateManager.h"
@@ -15,18 +18,38 @@ PlayState::~PlayState()
 
 void PlayState::Load()
 {
-    
+    // Loading Agents
+    for (size_t i = 0; i < m_initalPlayerAgents; i++)
+    {
+        Agent* player = new Agent();
+        player->AddBehaviour(new WanderBehaviour());
+        player->SetPosition({ 250,900 });
+        m_player.push_back(player);
+    }
+    for (size_t i = 0; i < m_initalEnemyAgents; i++)
+    {
+        Agent* player = new Agent();
+        player->AddBehaviour(new WanderBehaviour());
+        player->SetPosition({ 900,250 });
+        m_enemy.push_back(player);
+    }
+
+    // Loading Map
 	m_map = LoadTexture("./Sprites/big_Map_concept.png");
+
+    // Loading Camera
     m_camera.target = Vector2{ m_app->GetWindowWidth() / 2,  m_app->GetWindowHeight() * 3/2 };
     m_camera.offset = Vector2{ m_app->GetWindowWidth() / 2, m_app->GetWindowHeight() / 2 };
     m_camera.rotation = 0.0f;
     m_camera.zoom = 1.0f;
+
+    // Loading Graph
 	m_graph = new Graph2D();
-    int numRows = 10;
+    int numRows = 17;
     int numCols = 17;
     float xOffset = 0;
     float yOffset = 0;
-    float spacing = 50;
+    float spacing = 64;
 
     for (size_t y = 0; y < numRows; y++)
     {
@@ -71,8 +94,24 @@ void PlayState::Update(float dt)
 	}
     if (gms->GetActiveState() == this)
     {
-        m_graphEditor->Update(dt);
+        //m_graphEditor->Update(dt);
 
+        
+        // Updating all agents
+        for (auto agent : m_player) {
+            if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && !agent->FindBehaviour("SeekBehaviour"))
+            {
+                agent->AddBehaviour(new SeekBehaviour());
+            }
+            if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON) && !agent->FindBehaviour("FleeBehaviour"))
+            {
+                agent->AddBehaviour(new FleeBehaviour());
+            }
+            agent->Update(dt);
+        }
+        for (auto agent : m_enemy)agent->Update(dt);
+
+        // Camera moves with arrow keys
         if (IsKeyDown(KEY_RIGHT)) m_camera.target.x += 2;
         if (IsKeyDown(KEY_LEFT)) m_camera.target.x -= 2;
         if (IsKeyDown(KEY_UP)) m_camera.target.y -= 2;
@@ -82,16 +121,6 @@ void PlayState::Update(float dt)
         if (m_camera.target.x > m_map.width - m_camera.offset.x) m_camera.target.x = m_map.width - m_camera.offset.x;
         if (m_camera.target.y < m_camera.offset.y) m_camera.target.y = m_camera.offset.y;
         if (m_camera.target.y > m_map.height - m_camera.offset.y) m_camera.target.y = m_map.height - m_camera.offset.y;
-
-        // Camera target follows player
-
-        // Camera rotation controls
-        //if (IsKeyDown(KEY_A)) camera.rotation--;
-        //else if (IsKeyDown(KEY_S)) camera.rotation++;
-
-        // Limit camera rotation to 80 degrees (-40 to 40)
-        //if (camera.rotation > 40) camera.rotation = 40;
-        //else if (camera.rotation < -40) camera.rotation = -40;
 
         // Camera zoom controls
         m_camera.zoom += ((float)GetMouseWheelMove() * 0.05f);
@@ -105,13 +134,23 @@ void PlayState::Update(float dt)
             m_camera.zoom = 1.0f;
             m_camera.rotation = 0.0f;
         }
+        // Debug View Toggle
+        if (IsKeyPressed(KEY_D) && IsKeyPressed(KEY_B) && IsKeyPressed(KEY_M) && IsKeyPressed(KEY_BACKSPACE))
+        {
+            m_debugMode = !m_debugMode;
+        }
     }   
 }
 void PlayState::Draw()
 {
     BeginMode2D(m_camera);
         DrawTexture(m_map, 0, 0, WHITE);
-        m_graphEditor->Draw(m_app->GetGameStateManager()->GetActiveState() == this);
+        for (auto agent : m_player)agent->Draw();
+        for (auto agent : m_enemy)agent->Draw();
+        if (m_debugMode)
+        {
+            m_graphEditor->Draw(m_app->GetGameStateManager()->GetActiveState() == this);
+        }       
     EndMode2D();
 
 }
