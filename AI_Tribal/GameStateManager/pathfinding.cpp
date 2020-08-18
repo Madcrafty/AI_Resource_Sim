@@ -1,0 +1,75 @@
+#include "pathfinding.h"
+#include "Graph2D.h"
+
+pathfinding::pathfinding()
+{
+
+}
+pathfinding::~pathfinding()
+{
+
+}
+
+void pathfinding::Update(float deltaTime)
+{
+	if (IsMouseButtonPressed(0))
+	{
+		auto mousePos = GetMousePosition();
+
+		auto newNode = m_graph->AddNode(mousePos);
+
+		std::vector<Graph2D::Node*> nearbyNodes;
+		m_graph->GetNearbyNodes(mousePos, m_connectRange, nearbyNodes);
+
+		for (auto nearbyNode : nearbyNodes)
+		{
+			float dist = Vector2Distance(newNode->data, nearbyNode->data);
+			m_graph->AddEdge(newNode, nearbyNode, dist);
+			m_graph->AddEdge(nearbyNode, newNode, dist);
+		}
+	}
+}
+void pathfinding::Draw(bool activeState)
+{
+	// Draw all connections
+	for (auto node : m_graph->GetNodes())
+	{
+		for (auto connection : node->connections)
+		{
+			DrawLine(node->data.x, node->data.y, connection.to->data.x, connection.to->data.y, GRAY);
+		}
+	}
+
+	// Draw all Nodes
+	for (auto node : m_graph->GetNodes())
+	{
+		DrawCircle(node->data.x, node->data.y, 8, LIGHTGRAY);
+		DrawCircleLines(node->data.x, node->data.y, 8, LIGHTGRAY);
+	}
+
+	// Draw a "preview" node where the mouse is
+
+	if (activeState == true)
+	{
+		auto mousePos = GetMousePosition();
+		DrawCircleV(mousePos, 6, { 200, 200, 200, 100 });
+
+		std::vector<Graph2D::Node*> nearbyNodes;
+		m_graph->GetNearbyNodes(mousePos, m_connectRange, nearbyNodes);
+
+		for (auto nearbyNode : nearbyNodes)
+		{
+			DrawLineV(mousePos, nearbyNode->data, { 130, 130, 130, 100 });
+		}
+	}
+}
+
+Graph2D* pathfinding::GetGraph()
+{
+	return m_graph;
+}
+void pathfinding::SetGraph(Graph2D* graph)
+{
+	m_graph = graph;
+	m_connectRange = GetGraph()->GetRange();
+}

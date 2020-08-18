@@ -21,6 +21,8 @@ public:
 
 	virtual void Update(float dt);
 	virtual void Draw();
+	
+	//Camera2D GetCamera2D();
 
 protected:
 private:
@@ -28,6 +30,8 @@ private:
 	int m_initalPlayerAgents = 10;
 	int m_initalEnemyAgents = 10;
 	bool m_debugMode = false;
+
+	Vector2 m_worldBorder;
 
 	std::vector<Agent*> m_selection;
 	std::vector<Agent*> m_player;

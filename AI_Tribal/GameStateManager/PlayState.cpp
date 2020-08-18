@@ -36,9 +36,10 @@ void PlayState::Load()
 
     // Loading Map
 	m_map = LoadTexture("./Sprites/big_Map_concept.png");
+    m_worldBorder = { (float)m_map.width, (float)m_map.height };
 
     // Loading Camera
-    m_camera.target = Vector2{ m_app->GetWindowWidth() / 2,  m_app->GetWindowHeight() * 3/2 };
+    m_camera.target = Vector2{ m_app->GetWindowWidth() / 2, m_app->GetWindowHeight() * 3/2 };
     m_camera.offset = Vector2{ m_app->GetWindowWidth() / 2, m_app->GetWindowHeight() / 2 };
     m_camera.rotation = 0.0f;
     m_camera.zoom = 1.0f;
@@ -101,15 +102,26 @@ void PlayState::Update(float dt)
         for (auto agent : m_player) {
             if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && !agent->FindBehaviour("SeekBehaviour"))
             {
-                agent->AddBehaviour(new SeekBehaviour());
+                agent->AddBehaviour(new SeekBehaviour(&m_camera));
             }
             if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON) && !agent->FindBehaviour("FleeBehaviour"))
             {
-                agent->AddBehaviour(new FleeBehaviour());
+                agent->AddBehaviour(new FleeBehaviour(&m_camera));
             }
             agent->Update(dt);
+            if (agent->GetPosition().x > m_worldBorder.x) agent->SetPosition({ m_worldBorder.x, agent->GetPosition().y });
+            if (agent->GetPosition().x < 0) agent->SetPosition({ 0, agent->GetPosition().y });
+            if (agent->GetPosition().y > m_worldBorder.y) agent->SetPosition({ agent->GetPosition().x, m_worldBorder.y });
+            if (agent->GetPosition().y < 0) agent->SetPosition({ agent->GetPosition().x, 0 });
         }
-        for (auto agent : m_enemy)agent->Update(dt);
+        for (auto agent : m_enemy)
+        {
+            agent->Update(dt);
+            if (agent->GetPosition().x > m_worldBorder.x) agent->SetPosition({ m_worldBorder.x, agent->GetPosition().y });
+            if (agent->GetPosition().x < 0) agent->SetPosition({ 0, agent->GetPosition().y });
+            if (agent->GetPosition().y > m_worldBorder.y) agent->SetPosition({ agent->GetPosition().x, m_worldBorder.y });
+            if (agent->GetPosition().y < 0) agent->SetPosition({ agent->GetPosition().x, 0 });
+        }
 
         // Camera moves with arrow keys
         if (IsKeyDown(KEY_RIGHT)) m_camera.target.x += 2;
@@ -154,3 +166,8 @@ void PlayState::Draw()
     EndMode2D();
 
 }
+
+//Camera2D PlayState::GetCamera2D()
+//{
+//    return m_camera;
+//}

@@ -41,6 +41,7 @@ private:
 
 protected:
 	std::vector<Behaviour*> m_behaviourList;
+	// std::vector<Atribute*> m_atributeList;
 
 	Vector2 m_position = { 0, 0 };
 	Vector2 m_velocity = { 0, 0 };
