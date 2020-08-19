@@ -59,12 +59,12 @@ int Graph2D::GetRange()
 {
 	return m_connectRange;
 }
-std::vector<Graph2D::Node*>Graph2D::GetPath(Agent* agent)
+std::vector<Vector2>Graph2D::GetPath(Agent* agent, Vector2 Target)
 {
 	// Get end node
 
-	auto mousePos = GetMousePosition();
-	auto endGNode = GetClosestNode(mousePos, m_connectRange);
+	//auto mousePos = GetScreenToWorld2D(GetMousePosition(), *m_camera);
+	auto endGNode = GetClosestNode(Target, m_connectRange);
 	auto beginGNode = GetClosestNode(agent->GetPosition(), m_connectRange);
 
 
@@ -137,13 +137,13 @@ std::vector<Graph2D::Node*>Graph2D::GetPath(Agent* agent)
 	}
 
 	//Create path in reverse from endNode to startNode
-	std::vector<Graph2D::Node*> path;
+	std::vector<Vector2> path;
 	PFNode* currentNode = closedList.back();
 
 	while (currentNode != nullptr)
 	{
 		//Add the current node to the beginning of the path
-		path.insert(path.begin(), currentNode->gNode);
+		path.insert(path.begin(), currentNode->gNode->data);
 		//Go to the previous node
 		currentNode = currentNode->parent;
 	}

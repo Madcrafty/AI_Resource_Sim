@@ -25,6 +25,9 @@ public:
 	// Find specific behaviour
 	bool FindBehaviour(const char* param);
 
+	// Get specific behaviour
+	Behaviour* GetBehaviour(const char* param);
+
 	// Movement functions
 	void SetPosition(Vector2 position) { m_position = position; }
 	Vector2 GetPosition() { return m_position; }

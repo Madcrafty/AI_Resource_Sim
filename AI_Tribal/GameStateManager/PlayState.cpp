@@ -22,9 +22,9 @@ void PlayState::Load()
 
     Agent* testPlayer = new Agent();
     auto pfBehaviour = new pathfinding();
-    std::vector<Vector2> tempPath = {  {10, 10}, {100, 10}, {200, 10}, {300, 10}, {400, 10},{400, 100}, {400, 200}, {400, 300} };
-    pfBehaviour->SetPath(tempPath);
-    testPlayer->AddBehaviour(new pathfinding());
+    //std::vector<Vector2> tempPath = {  {10, 10}, {100, 10}, {200, 10}, {300, 10}, {400, 10},{400, 100}, {400, 200}, {400, 300} };
+    //pfBehaviour->SetPath(tempPath);
+    testPlayer->AddBehaviour(pfBehaviour);
     testPlayer->SetPosition({ 250,900 });
     m_player.push_back(testPlayer);
 
@@ -118,6 +118,11 @@ void PlayState::Update(float dt)
             if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON) && !agent->FindBehaviour("FleeBehaviour"))
             {
                 agent->AddBehaviour(new FleeBehaviour(&m_camera));
+            }
+            if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && agent->FindBehaviour("FollowPathBehaviour"))
+            {
+                pathfinding* behaviour = (pathfinding*)agent->GetBehaviour("FollowPathBehaviour");
+                behaviour->SetPath(m_graph->GetPath(agent, GetScreenToWorld2D(GetMousePosition(), m_camera)));
             }
             agent->Update(dt);
             if (agent->GetPosition().x > m_worldBorder.x) agent->SetPosition({ m_worldBorder.x, agent->GetPosition().y });

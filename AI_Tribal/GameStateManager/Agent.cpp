@@ -3,6 +3,7 @@
 #include "KeyboardBehaviour.h"`
 #include "SeekBehaviour.h"
 #include "FleeBehaviour.h"
+#include "pathfinding.h"
 
 Agent::Agent()
 {}
@@ -51,8 +52,36 @@ bool Agent::FindBehaviour(const char* param)
 		{
 			return true;
 		}
+		if (dynamic_cast<pathfinding*>(m_behaviourList[i]) && param == "FollowPathBehaviour")
+		{
+			return true;
+		}
 	}
 	return false;
+}
+
+Behaviour* Agent::GetBehaviour(const char* param)
+{
+	for (size_t i = 0; i < m_behaviourList.size(); i++)
+	{
+		if (dynamic_cast<KeyboardBehaviour*>(m_behaviourList[i]) && param == "KeyboardBehaviour")
+		{
+			return m_behaviourList[i];
+		}
+		if (dynamic_cast<SeekBehaviour*>(m_behaviourList[i]) && param == "SeekBehaviour")
+		{
+			return m_behaviourList[i];
+		}
+		if (dynamic_cast<FleeBehaviour*>(m_behaviourList[i]) && param == "FleeBehaviour")
+		{
+			return m_behaviourList[i];
+		}
+		if (dynamic_cast<pathfinding*>(m_behaviourList[i]) && param == "FollowPathBehaviour")
+		{
+			return m_behaviourList[i];
+		}
+	}
+	return nullptr;
 }
 
 // Draw the agent
@@ -106,6 +135,10 @@ void Agent::RemoveBehaviour(const char* param)
 			m_behaviourList.erase(m_behaviourList.begin() + i);
 		}
 		if (dynamic_cast<SeekBehaviour*>(m_behaviourList[i]) && param == "SeekBehaviour")
+		{
+			m_behaviourList.erase(m_behaviourList.begin() + i);
+		}
+		if (dynamic_cast<pathfinding*>(m_behaviourList[i]) && param == "FollowPathBehaviour")
 		{
 			m_behaviourList.erase(m_behaviourList.begin() + i);
 		}

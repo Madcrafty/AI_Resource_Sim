@@ -21,7 +21,7 @@ public:
 	void GetNearbyNodes(Vector2 position, float radius, std::vector<Graph2D::Node*>& out_nodes);
 
 	Node* GetClosestNode(Vector2 position, float radius);
-	std::vector<Graph2D::Node*> GetPath(Agent* agent);
+	std::vector<Vector2> GetPath(Agent* agent, Vector2 Target);
 
 	int GetRange();
 
