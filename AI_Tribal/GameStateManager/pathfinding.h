@@ -1,22 +1,26 @@
 #pragma once
 
-class Graph2D;
+#include "Behaviour.h"
 
-class pathfinding
+class pathfinding : public Behaviour
 {
 public:
+
 	pathfinding();
-	~pathfinding();
+	virtual ~pathfinding();
 
-	void Update(float deltaTime);
-	void Draw(bool activeState);
+	virtual Vector2 Update(Agent* agent, float deltaTime);
+	virtual void Draw(Agent* agent);
 
-	Graph2D* GetGraph();
-	void SetGraph(Graph2D* graph);
+	const std::vector<Vector2>& GetPath() const;
+	void SetPath(const std::vector<Vector2>& path);
 
-
-protected:
-	Graph2D* m_graph;
 private:
-	int m_connectRange;
+
+	float m_maxSpeed = 50.0f;
+	int m_pointRadius = 100.0f;
+	std::vector<Vector2> m_path;
+
+	Vector2 m_curTarget;
+
 };

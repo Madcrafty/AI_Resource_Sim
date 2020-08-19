@@ -6,6 +6,7 @@
 #include "Graph2D.h"
 #include "Graph2DEditor.h"
 #include "GameStateManager.h"
+#include "pathfinding.h"
 
 PlayState::PlayState(Application* app) : m_app(app)
 {
@@ -18,6 +19,15 @@ PlayState::~PlayState()
 
 void PlayState::Load()
 {
+
+    Agent* testPlayer = new Agent();
+    auto pfBehaviour = new pathfinding();
+    std::vector<Vector2> tempPath = {  {10, 10}, {100, 10}, {200, 10}, {300, 10}, {400, 10},{400, 100}, {400, 200}, {400, 300} };
+    pfBehaviour->SetPath(tempPath);
+    testPlayer->AddBehaviour(new pathfinding());
+    testPlayer->SetPosition({ 250,900 });
+    m_player.push_back(testPlayer);
+
     // Loading Agents
     for (size_t i = 0; i < m_initalPlayerAgents; i++)
     {
@@ -26,6 +36,7 @@ void PlayState::Load()
         player->SetPosition({ 250,900 });
         m_player.push_back(player);
     }
+
     for (size_t i = 0; i < m_initalEnemyAgents; i++)
     {
         Agent* player = new Agent();
@@ -102,7 +113,7 @@ void PlayState::Update(float dt)
         for (auto agent : m_player) {
             if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && !agent->FindBehaviour("SeekBehaviour"))
             {
-                agent->AddBehaviour(new SeekBehaviour(&m_camera));
+                //agent->AddBehaviour(new SeekBehaviour(&m_camera));
             }
             if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON) && !agent->FindBehaviour("FleeBehaviour"))
             {

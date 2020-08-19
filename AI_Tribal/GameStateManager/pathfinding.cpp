@@ -1,75 +1,58 @@
 #include "pathfinding.h"
+#include "Agent.h"
 #include "Graph2D.h"
 
 pathfinding::pathfinding()
 {
-
 }
+
 pathfinding::~pathfinding()
 {
 
 }
 
-void pathfinding::Update(float deltaTime)
+Vector2 pathfinding::Update(Agent* agent, float deltaTime)
 {
-	if (IsMouseButtonPressed(0))
+	size_t i = 1;
+	Vector2 v = Vector2Subtract(m_curTarget, agent->GetPosition());
+	if (Vector2Distance(m_curTarget, agent->GetPosition()) < m_pointRadius)
 	{
-		auto mousePos = GetMousePosition();
-
-		auto newNode = m_graph->AddNode(mousePos);
-
-		std::vector<Graph2D::Node*> nearbyNodes;
-		m_graph->GetNearbyNodes(mousePos, m_connectRange, nearbyNodes);
-
-		for (auto nearbyNode : nearbyNodes)
+		// check if there is another target in the list
+		if (i < m_path.size())
 		{
-			float dist = Vector2Distance(newNode->data, nearbyNode->data);
-			m_graph->AddEdge(newNode, nearbyNode, dist);
-			m_graph->AddEdge(nearbyNode, newNode, dist);
-		}
-	}
-}
-void pathfinding::Draw(bool activeState)
-{
-	// Draw all connections
-	for (auto node : m_graph->GetNodes())
-	{
-		for (auto connection : node->connections)
-		{
-			DrawLine(node->data.x, node->data.y, connection.to->data.x, connection.to->data.y, GRAY);
+			m_curTarget = m_path.at(i);
+			i++;
 		}
 	}
 
-	// Draw all Nodes
-	for (auto node : m_graph->GetNodes())
+	Vector2 desiredVelocity = Vector2Scale(Vector2Normalize(v), agent->GetMaxSpeed());
+	//Vector2 desiredVelocity = Vector2Scale(Vector2Normalize(v), m_maxSpeed);
+	Vector2 steeringForce = Vector2Subtract(desiredVelocity, agent->GetVelocity());
+	return steeringForce;
+}
+void pathfinding::Draw(Agent* agent)
+{
+	// TODO: draw lines from each point in the path to the next point in the path
+	/*Vector2 p1 = agent->GetPosition();
+	Vector2 p2 = m_path.front();
+	for (size_t i = 0; i < m_path.size(); i++)
 	{
-		DrawCircle(node->data.x, node->data.y, 8, LIGHTGRAY);
-		DrawCircleLines(node->data.x, node->data.y, 8, LIGHTGRAY);
-	}
-
-	// Draw a "preview" node where the mouse is
-
-	if (activeState == true)
-	{
-		auto mousePos = GetMousePosition();
-		DrawCircleV(mousePos, 6, { 200, 200, 200, 100 });
-
-		std::vector<Graph2D::Node*> nearbyNodes;
-		m_graph->GetNearbyNodes(mousePos, m_connectRange, nearbyNodes);
-
-		for (auto nearbyNode : nearbyNodes)
+		DrawLineV(p1, p2, PURPLE);
+		
+		p1 = p2;
+		if (i+1 < m_path.size())
 		{
-			DrawLineV(mousePos, nearbyNode->data, { 130, 130, 130, 100 });
-		}
-	}
+			p2 = m_path.at(i+1);
+		}		
+	}*/
 }
 
-Graph2D* pathfinding::GetGraph()
+void pathfinding::SetPath(const std::vector<Vector2>& path)
 {
-	return m_graph;
+	m_path = path;
 }
-void pathfinding::SetGraph(Graph2D* graph)
+
+const std::vector<Vector2>& pathfinding::GetPath() const
 {
-	m_graph = graph;
-	m_connectRange = GetGraph()->GetRange();
+	return m_path;
 }

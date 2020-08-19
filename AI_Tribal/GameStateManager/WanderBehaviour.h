@@ -8,7 +8,7 @@ public:
 
 	virtual Vector2 Update(Agent* agent, float deltaTime);
 
-	void Draw(Agent* agent);
+	virtual void Draw(Agent* agent) {} 
 
 private:
 	Vector2 SetAngle(Vector2 vector, float value);

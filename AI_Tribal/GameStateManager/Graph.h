@@ -10,16 +10,14 @@ public:
 
 	struct Node
 	{
-		float gScore;
 		TNodeData data;
 		std::vector<Edge> connections;
 	};
 
 	struct Edge
 	{
-		float cost;
 		Node* to;
-		TEdgeData data;
+		TEdgeData data; // this is cost in context of our pathfinder..
 	};
 
 public:

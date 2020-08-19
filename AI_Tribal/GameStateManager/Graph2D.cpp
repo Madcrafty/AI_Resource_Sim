@@ -1,5 +1,6 @@
 #include "Graph2D.h"
-
+#include "Agent.h"
+#include <map>
 Graph2D::Graph2D()
 {
 
@@ -31,7 +32,121 @@ void Graph2D::GetNearbyNodes(Vector2 position, float radius, std::vector<Graph2D
 		}
 	}
 }
+Graph2D::Node* Graph2D::GetClosestNode(Vector2 position, float radius)
+{
+	std::vector<Graph2D::Node*> neibours;
+	GetNearbyNodes(position, radius, neibours);
+
+	if (neibours.empty())
+		return nullptr;
+
+	
+	Graph2D::Node* closest = neibours[0];
+	float closestDist = Vector2Distance(closest->data, position);
+	for (auto& n : neibours)
+	{
+		float dist = Vector2Distance(n->data, position);
+		if (dist < closestDist)
+		{
+			closestDist = dist;
+			closest = n;
+		}
+	}
+
+	return closest;
+}
 int Graph2D::GetRange()
 {
 	return m_connectRange;
+}
+std::vector<Graph2D::Node*>Graph2D::GetPath(Agent* agent)
+{
+	// Get end node
+
+	auto mousePos = GetMousePosition();
+	auto endGNode = GetClosestNode(mousePos, m_connectRange);
+	auto beginGNode = GetClosestNode(agent->GetPosition(), m_connectRange);
+
+
+	//Create our temporary lists for storing nodes
+	std::vector<PFNode*> openList;
+	std::vector<PFNode*> closedList;
+
+	auto IsNodeInOpenOrClosed = [&](Graph2D::Node* node) -> PFNode* {
+		for (auto pfn : openList)
+			if (pfn->gNode == node)
+				return pfn;
+
+		for (auto pfn : closedList)
+			if (pfn->gNode == node)
+				return pfn;
+
+		return nullptr;
+	};
+
+
+	//Add the starting node to openList
+	PFNode* pfNode = new PFNode();
+	pfNode->parent = nullptr;
+	pfNode->gNode = beginGNode;
+	openList.push_back(pfNode);
+
+	while (!openList.empty())
+	{
+		//Set the current node to the first node in the openList
+		auto currentNode = openList.front();
+		//Remove currentNode from openList
+		openList.erase(openList.begin());
+		//Add currentNode to closedList
+		closedList.push_back(currentNode);
+
+		//If the destination node was added to the closed list,
+		//the shortest path has been found
+		if (currentNode->gNode == endGNode)
+		{
+			// path has been found
+			break;
+		}
+
+		//For each Edge e in currentNode's connections
+		for (Graph2D::Edge e : currentNode->gNode->connections)
+		{
+			float gScore = currentNode->gScore + e.data;
+
+			auto childPfNode = IsNodeInOpenOrClosed(e.to);
+			if (childPfNode == nullptr)
+			{
+				// we should create a pfnode and add it to the stack
+				childPfNode = new PFNode();
+				childPfNode->parent = currentNode;
+				childPfNode->gNode = e.to;
+				childPfNode->gScore = gScore;
+				openList.push_back(childPfNode);
+			}
+			else
+			{
+				// was it faster to get to the child node from the currentNode
+				// if so, we should update its parent and gscore
+				if (childPfNode->gScore > gScore)
+				{
+					childPfNode->gScore = gScore;
+					childPfNode->parent = currentNode;
+				}
+			}
+		}
+	}
+
+	//Create path in reverse from endNode to startNode
+	std::vector<Graph2D::Node*> path;
+	PFNode* currentNode = closedList.back();
+
+	while (currentNode != nullptr)
+	{
+		//Add the current node to the beginning of the path
+		path.insert(path.begin(), currentNode->gNode);
+		//Go to the previous node
+		currentNode = currentNode->parent;
+	}
+
+	return path;
 }

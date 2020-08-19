@@ -59,6 +59,10 @@ bool Agent::FindBehaviour(const char* param)
 void Agent::Draw()
 {
 	DrawRectangle(m_position.x, m_position.y, 10, 10, m_colour);
+	for (size_t i = 0; i < m_behaviourList.size(); i++)
+	{
+		m_behaviourList[i]->Draw(this);
+	}
 }
 
 // Update colour
