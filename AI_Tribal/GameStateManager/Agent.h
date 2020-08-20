@@ -28,6 +28,9 @@ public:
 	// Get specific behaviour
 	Behaviour* GetBehaviour(const char* param);
 
+	// Set as player
+	void SetPlayer();
+
 	// Movement functions
 	void SetPosition(Vector2 position) { m_position = position; }
 	Vector2 GetPosition() { return m_position; }
@@ -49,5 +52,6 @@ protected:
 	Vector2 m_position = { 0, 0 };
 	Vector2 m_velocity = { 0, 0 };
 	float m_maxSpeed = 100;
+	bool player = false;
 	Color m_colour = GRAY;
 };

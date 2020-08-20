@@ -20,7 +20,7 @@ private:
 	std::list < std::function<void()> > m_commands;
 	float m_maxSpeed = 50.0f;
 	int m_pointRadius = 2.0f;
-	bool m_targeting = true;
+	bool m_targeting = false;
 	std::vector<Vector2> m_path;
 	size_t m_order = 0;
 	Vector2 m_curTarget;

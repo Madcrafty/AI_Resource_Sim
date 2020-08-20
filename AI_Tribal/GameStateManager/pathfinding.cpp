@@ -14,11 +14,16 @@ pathfinding::~pathfinding()
 
 Vector2 pathfinding::Update(Agent* agent, float deltaTime)
 {
+	// if we dont have a path, than we dont need to do anything
+	if (m_path.empty())
+	{
+		m_curTarget = agent->GetPosition();
+		return { 0, 0 };
+	}
+
 	Vector2 desiredVelocity = { 0,0 };
 	Vector2 steeringForce = { 0,0 };
-	for (auto cmd : m_commands)
-		cmd();
-	m_commands.clear();
+	
 	Vector2 v = Vector2Subtract(m_curTarget, agent->GetPosition());
 	if (Vector2Distance(m_curTarget, agent->GetPosition()) < m_pointRadius)
 	{
@@ -26,11 +31,13 @@ Vector2 pathfinding::Update(Agent* agent, float deltaTime)
 		if (m_order < m_path.size()-1)
 		{
 			m_order++;
-			m_curTarget = m_path.at(m_order);		
+			m_curTarget = m_path.at(m_order);
+			v = Vector2Subtract(m_curTarget, agent->GetPosition());
 		}
 		else
 		{
 			m_targeting = false;
+			m_curTarget = agent->GetPosition();
 		}
 	}
 	if (m_targeting == true)
@@ -44,6 +51,10 @@ Vector2 pathfinding::Update(Agent* agent, float deltaTime)
 }
 void pathfinding::Draw(Agent* agent)
 {
+	// if we dont have a path, than we will not draw it.
+	if (m_path.empty() || m_targeting == false)
+		return;
+
 	// TODO: draw lines from each point in the path to the next point in the path
 	Vector2 p1 = agent->GetPosition();
 	Vector2 p2 = m_path.at(m_order);
@@ -61,12 +72,13 @@ void pathfinding::Draw(Agent* agent)
 
 void pathfinding::SetPath(const std::vector<Vector2>& path)
 {
-	m_commands.push_back([=]() {
+	if (path.empty() == false)
+	{
 		m_path = path;
 		m_order = 0;
+		//m_curTarget = m_path.at(m_order);
 		m_targeting = true;
-	});
-
+	}
 }
 
 const std::vector<Vector2>& pathfinding::GetPath() const

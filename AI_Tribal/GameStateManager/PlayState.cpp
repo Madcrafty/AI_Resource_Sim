@@ -20,19 +20,18 @@ PlayState::~PlayState()
 void PlayState::Load()
 {
 
-    Agent* testPlayer = new Agent();
-    auto pfBehaviour = new pathfinding();
-    //std::vector<Vector2> tempPath = {  {10, 10}, {100, 10}, {200, 10}, {300, 10}, {400, 10},{400, 100}, {400, 200}, {400, 300} };
-    //pfBehaviour->SetPath(tempPath);
-    testPlayer->AddBehaviour(pfBehaviour);
+    /*Agent* testPlayer = new Agent();
+    testPlayer->AddBehaviour(new pathfinding());
     testPlayer->SetPosition({ 250,900 });
-    m_player.push_back(testPlayer);
+    m_player.push_back(testPlayer);*/
 
     // Loading Agents
     for (size_t i = 0; i < m_initalPlayerAgents; i++)
     {
         Agent* player = new Agent();
         player->AddBehaviour(new WanderBehaviour());
+        player->SetPlayer();
+        player->AddBehaviour(new pathfinding());
         player->SetPosition({ 250,900 });
         m_player.push_back(player);
     }
@@ -111,18 +110,19 @@ void PlayState::Update(float dt)
         
         // Updating all agents
         for (auto agent : m_player) {
-            if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && !agent->FindBehaviour("SeekBehaviour"))
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !agent->FindBehaviour("SeekBehaviour"))
             {
                 //agent->AddBehaviour(new SeekBehaviour(&m_camera));
             }
-            if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON) && !agent->FindBehaviour("FleeBehaviour"))
+            if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && !agent->FindBehaviour("FleeBehaviour"))
             {
                 agent->AddBehaviour(new FleeBehaviour(&m_camera));
             }
-            if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && agent->FindBehaviour("FollowPathBehaviour"))
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && agent->FindBehaviour("FollowPathBehaviour"))
             {
                 pathfinding* behaviour = (pathfinding*)agent->GetBehaviour("FollowPathBehaviour");
-                behaviour->SetPath(m_graph->GetPath(agent, GetScreenToWorld2D(GetMousePosition(), m_camera)));
+                std::vector<Vector2> path = m_graph->GetPath(agent, GetScreenToWorld2D(GetMousePosition(), m_camera));
+                behaviour->SetPath(path);
             }
             agent->Update(dt);
             if (agent->GetPosition().x > m_worldBorder.x) agent->SetPosition({ m_worldBorder.x, agent->GetPosition().y });

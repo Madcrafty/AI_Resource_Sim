@@ -94,29 +94,42 @@ void Agent::Draw()
 	}
 }
 
+void Agent::SetPlayer()
+{
+	player = true;
+}
+
 // Update colour
 void Agent::ColourUpdate()
 {
 	Color newColour = { 0,0,0,255 };
-	if (m_behaviourList.size() == 0)
+	if (player == true)
 	{
-		m_colour = GRAY;
+		newColour = RED;
 	}
-	for (size_t i = 0; i < m_behaviourList.size(); i++)
+	else
 	{
-		if (dynamic_cast<KeyboardBehaviour*>(m_behaviourList[i]))
-		{
-			newColour.g = 200;
-		}
-		if (dynamic_cast<SeekBehaviour*>(m_behaviourList[i]))
-		{
-			newColour.b = 200;
-		}
-		if (dynamic_cast<FleeBehaviour*>(m_behaviourList[i]))
-		{
-			newColour.r = 200;
-		}
+		newColour = GREEN;
 	}
+	//if (m_behaviourList.size() == 0)
+	//{
+	//	m_colour = GRAY;
+	//}
+	//for (size_t i = 0; i < m_behaviourList.size(); i++)
+	//{
+	//	if (dynamic_cast<KeyboardBehaviour*>(m_behaviourList[i]))
+	//	{
+	//		newColour.g = 200;
+	//	}
+	//	if (dynamic_cast<SeekBehaviour*>(m_behaviourList[i]))
+	//	{
+	//		newColour.b = 200;
+	//	}
+	//	if (dynamic_cast<FleeBehaviour*>(m_behaviourList[i]))
+	//	{
+	//		newColour.r = 200;
+	//	}
+	//}
 	m_colour = newColour;
 }
 
