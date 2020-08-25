@@ -54,4 +54,12 @@ protected:
 	float m_maxSpeed = 100;
 	bool player = false;
 	Color m_colour = GRAY;
+
+	// Inventory
+	int m_capacity;
+
+	int m_wood;
+	int m_food;
+	int m_iron;
+	int m_rock;
 };

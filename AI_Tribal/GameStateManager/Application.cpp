@@ -6,6 +6,7 @@
 #include "MenuState.h"
 #include "PlayState.h"
 #include "PauseState.h"
+#include "TestState.h"
 
 Application::Application(int windowWidth, int windowHeight) :
 	m_windowWidth(windowWidth), m_windowHeight(windowHeight)
@@ -23,6 +24,7 @@ void Application::Run()
 	SetTargetFPS(60);
 
 	m_gameStateManager = new GameStateManager();
+	m_gameStateManager->SetState("Test", new TestState(this)); // Load()
 	m_gameStateManager->SetState("Splash", new SplashState(this)); // Load()
 	m_gameStateManager->SetState("Menu", new MenuState(this)); // Load()
 	m_gameStateManager->SetState("Play", new PlayState(this)); // Load()
@@ -33,7 +35,7 @@ void Application::Run()
 	//m_gameStateManager->SetState("GameOver", new GameOver());
 	//m_gameStateManager->SetState("RubenTest", new RubenTestState());
 
-	m_gameStateManager->PushState("Splash");
+	m_gameStateManager->PushState("Test");
 
 	//m_gameStateManager->PopState();
 	//m_gameStateManager->PushState("Menu");
