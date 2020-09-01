@@ -10,6 +10,7 @@ class Application;
 class GameObject;
 class Agent;
 class ResourceNode;
+class HealingZone;
 
 class TestState : public IGameState
 {
@@ -26,6 +27,7 @@ public:
 
 	std::vector<ResourceNode *>& GetBerries();
 	Agent* GetAgent(int num);
+	HealingZone* GetHome();
 
 	void SpawnBerry(Vector2 pos);
 
@@ -33,6 +35,7 @@ protected:
 private:
 	// Map
 	// House
+	HealingZone* m_home;
 	// Graph
 	Graph2D* m_graph;
 	// Agent1

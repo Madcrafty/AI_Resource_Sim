@@ -10,6 +10,7 @@
 #include "TestState.h"
 #include "GameObject.h"
 #include "ResourceNode.h"
+#include "HealingZone.h"
 
 Agent::Agent(TestState* app) : GameObject(app)
 {}
@@ -44,7 +45,7 @@ void Agent::Update(float deltaTime)
 	if (m_health == 1)
 	{
 		RemoveBehaviour("WanderBehaviour");
-		AddBehaviour(new SeekBehaviour(m_home));
+		AddBehaviour(new SeekBehaviour(&m_app->GetHome()->GetPosition()));
 	}
 	if (m_health <= 0)
 	{

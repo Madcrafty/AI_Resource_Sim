@@ -157,6 +157,7 @@
     <ClCompile Include="GameStateManager.cpp" />
     <ClCompile Include="Graph2D.cpp" />
     <ClCompile Include="Graph2DEditor.cpp" />
+    <ClCompile Include="HealingZone.cpp" />
     <ClCompile Include="KeyboardBehaviour.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuState.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Graph2D.h" />
     <ClInclude Include="Graph2DEditor.h" />
+    <ClInclude Include="HealingZone.h" />
     <ClInclude Include="IGameState.h" />
     <ClInclude Include="KeyboardBehaviour.h" />
     <ClInclude Include="MenuState.h" />

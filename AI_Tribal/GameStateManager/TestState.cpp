@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include "ResourceNode.h"
+#include "HealingZone.h"
 
 TestState::TestState(Application* app) : m_app(app)
 {
@@ -42,7 +43,7 @@ void TestState::Load()
             m_graph->AddNode({
                 x * spacing + xOffset,
                 y * spacing + yOffset
-                });
+            });
         }
     }
 
@@ -77,6 +78,10 @@ void TestState::Load()
     m_agent1->SetPostion({100,100});
     m_agent2 = new Agent(this);
     m_agent2->AddBehaviour(new WanderBehaviour);
+
+    // load home
+    m_home = new HealingZone(this);
+    m_home->SetPostion({ 100,100 });
 }
 void TestState::Unload()
 {
@@ -110,11 +115,13 @@ void TestState::Update(float dt)
 		//m_player->Update(dt);
 	}
 
+    // Update Berries
     for (auto berry : m_berries)
     {
         berry->Update(dt);
     }
 
+    // Update Agents
     m_agent1->Update(dt);
     if (m_agent1->GetPosition().x < 0)
     {
@@ -149,20 +156,24 @@ void TestState::Update(float dt)
     {
         m_agent2->SetPostion({ m_agent2->GetPosition().x, m_app->GetWindowHeight() });
     }
+    
+    // Update Home
+    m_home->Update(dt);
 }
 void TestState::Draw()
 {
     for (auto berry : m_berries)
         berry->Draw();
+    m_home->Draw();
 
 	m_agent1->Draw();
     m_agent2->Draw();
 
     // Score Board;
-    std::string s = std::to_string(m_agent1->GetScore());
+    std::string s = std::to_string(m_agent1->GetHealth());
     char const* a1_score = s.c_str();
     DrawText(a1_score, 0, 0, 32, RED);
-    s = std::to_string(m_agent2->GetScore());
+    s = std::to_string(m_agent2->GetHealth());
     char const* a2_score = s.c_str();
     DrawText(a2_score, m_app->GetWindowWidth() - 64,0 , 32, RED);
 }
@@ -187,6 +198,11 @@ Agent* TestState::GetAgent(int num)
         std::cout << "Agent null" << std::endl;
         return nullptr;
     }
+}
+
+HealingZone* TestState::GetHome()
+{
+    return m_home;
 }
 
 void TestState::SpawnBerry(Vector2 pos)

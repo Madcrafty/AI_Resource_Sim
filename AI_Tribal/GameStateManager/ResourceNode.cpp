@@ -9,7 +9,7 @@
 
 ResourceNode::ResourceNode(TestState *app)  : GameObject(app)
 {
-	m_rand = rand() % 4;
+	m_rand = 0;
 }
 ResourceNode::~ResourceNode()
 {
