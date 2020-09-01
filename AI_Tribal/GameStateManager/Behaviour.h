@@ -1,5 +1,7 @@
 #pragma once
-#include "Agent.h"
+
+#include "raymath.h"
+class Agent;
 
 class Behaviour
 {

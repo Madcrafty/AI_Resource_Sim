@@ -1,4 +1,5 @@
 #include "KeyboardBehaviour.h"
+#include "Agent.h"
 
 Vector2 KeyboardBehaviour::Update(Agent* agent, float deltaTime)
 {

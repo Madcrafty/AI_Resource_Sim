@@ -3,9 +3,13 @@
 #include "IGameState.h"
 #include "raylib.h"
 #include "Button.h"
+#include  <vector>
 
+class Graph2D;
 class Application;
 class GameObject;
+class Agent;
+class ResourceNode;
 
 class TestState : public IGameState
 {
@@ -20,9 +24,24 @@ public:
 	virtual void Update(float dt);
 	virtual void Draw();
 
+	std::vector<ResourceNode *>& GetBerries();
+	Agent* GetAgent(int num);
+
+	void SpawnBerry(Vector2 pos);
+
 protected:
 private:
+	// Map
+	// House
+	// Graph
+	Graph2D* m_graph;
+	// Agent1
+	Agent* m_agent1;
+	// Agent2
+	Agent* m_agent2;
+	// Berries
+	std::vector<ResourceNode *> m_berries;
 
 	Application* m_app;
-	GameObject* m_player = nullptr;
+	//GameObject* m_player = nullptr;
 };

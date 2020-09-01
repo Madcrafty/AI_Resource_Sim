@@ -3,16 +3,18 @@
 class ResourceNode : public GameObject
 {
 public:
-	ResourceNode();
-	~ResourceNode();
+	ResourceNode(TestState *app);
+	virtual ~ResourceNode();
 
-	void SetResource1(int amount);
-	void SetResource2(int amount);
-	void GiveResource1(int amount);
-	void GiveResource2(int amount);
+	virtual void Update(float deltaTime);
+	virtual void Draw();
+
+	void Die();
+
 protected:
-	int m_resource1;
-	int m_resource2;
 private:
+	bool isDead = false;
 	Texture2D m_image;
+	float m_range = 8;
+	int m_rand = 0;
 };

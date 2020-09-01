@@ -3,6 +3,8 @@
 #include "Behaviour.h"
 #include <list>
 #include <functional>
+#include <vector>
+
 class pathfinding : public Behaviour
 {
 public:

@@ -1,11 +1,17 @@
 #include "Agent.h"
+
 #include "Behaviour.h"
 #include "KeyboardBehaviour.h"`
 #include "SeekBehaviour.h"
 #include "FleeBehaviour.h"
+#include "WanderBehaviour.h"
 #include "pathfinding.h"
 
-Agent::Agent()
+#include "TestState.h"
+#include "GameObject.h"
+#include "ResourceNode.h"
+
+Agent::Agent(TestState* app) : GameObject(app)
 {}
 
 Agent::~Agent()
@@ -21,6 +27,30 @@ Vector2 Agent::Truncate(Vector2 v, float max)
 // Update the agent and its behaviours
 void Agent::Update(float deltaTime)
 {
+	// BehaviourList Update Paramiters
+	//check if enemy agent is close
+	// if so flee from agent's postion
+	if (!FindBehaviour("SeekBehaviour"))
+	{
+		for (auto iter : m_app->GetBerries())
+		{
+			if (Vector2Distance(m_position, iter->GetPosition()) < m_detectRange)
+			{
+				RemoveBehaviour("WanderBehaviour");
+				AddBehaviour(new SeekBehaviour(&iter->GetPosition()));
+			}
+		}
+	}
+	if (m_health == 1)
+	{
+		RemoveBehaviour("WanderBehaviour");
+		AddBehaviour(new SeekBehaviour(m_home));
+	}
+	if (m_health <= 0)
+	{
+		delete this;
+	}
+
 	// Force is equal to zero
 	// For each Behaviour in Behaviour list
 	//	 Call the Behaviour’s Update functionand add the returned value to Force
@@ -56,6 +86,10 @@ bool Agent::FindBehaviour(const char* param)
 		{
 			return true;
 		}
+		if (dynamic_cast<WanderBehaviour*>(m_behaviourList[i]) && param == "WanderBehaviour")
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -77,6 +111,10 @@ Behaviour* Agent::GetBehaviour(const char* param)
 			return m_behaviourList[i];
 		}
 		if (dynamic_cast<pathfinding*>(m_behaviourList[i]) && param == "FollowPathBehaviour")
+		{
+			return m_behaviourList[i];
+		}
+		if (dynamic_cast<WanderBehaviour*>(m_behaviourList[i]) && param == "WanderBehaviour")
 		{
 			return m_behaviourList[i];
 		}
@@ -146,15 +184,45 @@ void Agent::RemoveBehaviour(const char* param)
 		if (dynamic_cast<KeyboardBehaviour*>(m_behaviourList[i]) && param == "KeyboardBehaviour")
 		{
 			m_behaviourList.erase(m_behaviourList.begin() + i);
+			return;
 		}
 		if (dynamic_cast<SeekBehaviour*>(m_behaviourList[i]) && param == "SeekBehaviour")
 		{
 			m_behaviourList.erase(m_behaviourList.begin() + i);
+			return;
+		}
+		if (dynamic_cast<FleeBehaviour*>(m_behaviourList[i]) && param == "FleeBehaviour")
+		{
+			m_behaviourList.erase(m_behaviourList.begin() + i);
+			return;
 		}
 		if (dynamic_cast<pathfinding*>(m_behaviourList[i]) && param == "FollowPathBehaviour")
 		{
 			m_behaviourList.erase(m_behaviourList.begin() + i);
+			return;
+		}
+		if (dynamic_cast<WanderBehaviour*>(m_behaviourList[i]) && param == "WanderBehaviour")
+		{
+			m_behaviourList.erase(m_behaviourList.begin() + i);
+			return;
 		}
 	}
 	ColourUpdate();
+}
+void Agent::AddScore(int i)
+{
+	m_score += i;
+}
+int Agent::GetScore()
+{
+	return m_score;
+}
+
+void Agent::AddHealth(int i)
+{
+	m_health += i;
+}
+int Agent::GetHealth()
+{
+	return m_health;
 }

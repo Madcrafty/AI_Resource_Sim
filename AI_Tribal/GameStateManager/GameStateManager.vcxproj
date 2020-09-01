@@ -163,6 +163,7 @@
     <ClCompile Include="pathfinding.cpp" />
     <ClCompile Include="PauseState.cpp" />
     <ClCompile Include="PlayState.cpp" />
+    <ClCompile Include="ResourceNode.cpp" />
     <ClCompile Include="SeekBehaviour.cpp" />
     <ClCompile Include="SplashState.cpp" />
     <ClCompile Include="TestState.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="pathfinding.h" />
     <ClInclude Include="PauseState.h" />
     <ClInclude Include="PlayState.h" />
+    <ClInclude Include="ResourceNode.h" />
     <ClInclude Include="SeekBehaviour.h" />
     <ClInclude Include="SplashState.h" />
     <ClInclude Include="TestState.h" />

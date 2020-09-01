@@ -1,8 +1,11 @@
 #include "GameObject.h"
+#include "TestState.h"
 
-GameObject::GameObject()
+bool GameObject::ms_debugDraw = false;
+
+GameObject::GameObject(TestState* app) : m_app(app)
 {
-
+	
 }
 GameObject::~GameObject()
 {
@@ -23,9 +26,12 @@ void GameObject::Update(float deltaTime)
 }
 void GameObject::Draw()
 {
-	Vector2 heading = Vector2Add(m_position, m_velocity);
-	DrawCircleV(m_position, 8, GRAY);
-	DrawLineV(m_position, heading, BLACK);
+	if (GameObject::IsDebugRendering())
+	{
+		Vector2 heading = Vector2Add(m_position, m_velocity);
+		DrawCircleV(m_position, 8, GRAY);
+		DrawLineV(m_position, heading, BLACK);
+	}
 }
 void GameObject::ApplyForce(const Vector2& force)
 {
@@ -34,7 +40,7 @@ void GameObject::ApplyForce(const Vector2& force)
 }
 
 // Getters
-const Vector2& GameObject::GetPostion() const
+Vector2& GameObject::GetPosition() 
 {
 	return m_position;
 }
@@ -59,4 +65,13 @@ void GameObject::SetVelocity(const Vector2& vel)
 void GameObject::SetFriction(const float& friction)
 {
 	m_friction = friction;
+}
+
+void GameObject::SetDebugRendering(bool enabled)
+{
+	ms_debugDraw = enabled;
+}
+bool GameObject::IsDebugRendering()
+{
+	return ms_debugDraw;
 }
