@@ -21,7 +21,7 @@ Application::~Application()
 
 void Application::Run()
 {
-	InitWindow(m_windowWidth, m_windowHeight, "raylib [core] example - basic window");
+	InitWindow(m_windowWidth, m_windowHeight, "Berry Nice");
 	SetTargetFPS(60);
 
 	m_gameStateManager = new GameStateManager();

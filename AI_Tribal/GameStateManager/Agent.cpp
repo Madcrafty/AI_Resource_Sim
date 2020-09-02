@@ -28,29 +28,62 @@ Vector2 Agent::Truncate(Vector2 v, float max)
 // Update the agent and its behaviours
 void Agent::Update(float deltaTime)
 {
+	if (m_dead == true)
+	{
+		return;
+	}
 	// BehaviourList Update Paramiters
 	//check if enemy agent is close
 	// if so flee from agent's postion
+	if (m_behaviourList.size() == 0)
+	{
+		AddBehaviour(new WanderBehaviour());
+	}
 	if (!FindBehaviour("SeekBehaviour"))
 	{
 		for (auto iter : m_app->GetBerries())
 		{
 			if (Vector2Distance(m_position, iter->GetPosition()) < m_detectRange)
 			{
-				RemoveBehaviour("WanderBehaviour");
-				AddBehaviour(new SeekBehaviour(&iter->GetPosition()));
+				if (FindBehaviour("SeekBehaviour") == false)
+				{
+					RemoveBehaviour("WanderBehaviour");
+					AddBehaviour(new SeekBehaviour(&iter->GetPosition()));
+				}
+				//RemoveBehaviour("WanderBehaviour");
+				//AddBehaviour(new SeekBehaviour(&iter->GetPosition()));
 			}
 		}
 	}
-	if (m_health == 1)
+	if (m_health >= 4)
 	{
+		if (m_healing == true)
+		{
+			RemoveBehaviour("SeekBehaviour");
+			//AddBehaviour(new WanderBehaviour());
+			m_healing = false;
+		}
+	}
+	if (m_healing == false && m_health == 1)
+	{
+		if (FindBehaviour("SeekBehaviour") == true)
+		{
+			RemoveBehaviour("SeekBehaviour");
+		}
 		RemoveBehaviour("WanderBehaviour");
+		AddBehaviour(new SeekBehaviour(&m_app->GetHome()->GetPosition()));
+		m_healing = true;
+	}
+	if (m_healing == true && Vector2Distance(m_position, m_app->GetHome()->GetPosition()) > m_app->GetHome()->GetRange()
+		&& FindBehaviour("SeekBehaviour") == false)
+	{
 		AddBehaviour(new SeekBehaviour(&m_app->GetHome()->GetPosition()));
 	}
 	if (m_health <= 0)
 	{
-		delete this;
+		m_dead = true;
 	}
+	
 
 	// Force is equal to zero
 	// For each Behaviour in Behaviour list
@@ -136,6 +169,7 @@ void Agent::Draw()
 void Agent::SetPlayer()
 {
 	player = true;
+	ColourUpdate();
 }
 
 // Update colour

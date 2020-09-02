@@ -21,7 +21,7 @@ Vector2 SeekBehaviour::Update(Agent* agent, float deltaTime)
 	{
 		// if seeker on top of target, v is 0 so following calculations are not needed
 		agent->RemoveBehaviour("SeekBehaviour");
-		agent->AddBehaviour(new WanderBehaviour());
+		//agent->AddBehaviour(new WanderBehaviour());
 	}
 
 	Vector2 desiredVelocity = Vector2Scale(Vector2Normalize(v), agent->GetMaxSpeed());

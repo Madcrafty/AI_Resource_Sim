@@ -37,5 +37,5 @@ void SplashState::Update(float dt)
 }
 void SplashState::Draw()
 {
-	DrawText("Created By: Ruben Antao", m_app->GetWindowWidth()/2, m_app->GetWindowHeight()/2, 20, BLACK);
+	DrawText("Created By: Ruben Antao", m_app->GetWindowWidth()/2 - 100, m_app->GetWindowHeight()/2 - 10, 20, BLACK);
 }

@@ -34,6 +34,7 @@ public:
 protected:
 private:
 	// Map
+	Texture2D m_image;
 	// House
 	HealingZone* m_home;
 	// Graph

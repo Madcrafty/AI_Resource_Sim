@@ -49,7 +49,7 @@ void MenuState::Update(float dt)
 }
 void MenuState::Draw()
 {
-	DrawText("Berry Nice", m_app->GetWindowWidth() / 2 - /*text offset*/ 30, m_app->GetWindowHeight() / 4, 20, DARKGREEN);
+	DrawText("Berry Nice", m_app->GetWindowWidth() / 2 - 50, m_app->GetWindowHeight() / 4, 20, DARKGREEN);
 	m_play->Draw();
 	m_exit->Draw();
 }

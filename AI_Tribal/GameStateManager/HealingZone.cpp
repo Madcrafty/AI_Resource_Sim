@@ -9,7 +9,7 @@
 
 HealingZone::HealingZone(TestState* app) : GameObject(app)
 {
-
+	m_image = LoadTexture("./Sprites/big_HealZone_c.png");
 }
 HealingZone::~HealingZone()
 {
@@ -34,7 +34,7 @@ void HealingZone::Update(float deltaTime)
 		timer2 += deltaTime;
 		if (timer2 >= 1 / m_hps)
 		{
-			m_app->GetAgent(01)->AddHealth(1);
+			m_app->GetAgent(1)->AddHealth(1);
 			timer2 = 0;
 		}
 	}
@@ -42,5 +42,11 @@ void HealingZone::Update(float deltaTime)
 }
 void HealingZone::Draw()
 {
+	DrawCircleV(m_position, m_range, {255, 249, 0, 50});
+	DrawTextureV(m_image, Vector2Subtract(m_position, {16, 16}), WHITE);
 	GameObject::Draw();
+}
+float HealingZone::GetRange()
+{
+	return m_range;
 }

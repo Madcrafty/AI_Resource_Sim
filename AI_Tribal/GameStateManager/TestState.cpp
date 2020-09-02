@@ -15,7 +15,7 @@
 
 TestState::TestState(Application* app) : m_app(app)
 {
-
+    m_image = LoadTexture("./Sprites/Huge_background.png");
 }
 TestState::~TestState()
 {
@@ -75,13 +75,13 @@ void TestState::Load()
     m_agent1 = new Agent(this);
     m_agent1->AddBehaviour(new WanderBehaviour);
     m_agent1->SetPlayer();
-    m_agent1->SetPostion({100,100});
+    m_agent1->SetPostion({ m_app->GetWindowWidth(),m_app->GetWindowHeight() });
     m_agent2 = new Agent(this);
     m_agent2->AddBehaviour(new WanderBehaviour);
 
     // load home
     m_home = new HealingZone(this);
-    m_home->SetPostion({ 100,100 });
+    m_home->SetPostion({ m_app->GetWindowWidth()/2,m_app->GetWindowHeight()/2 });
 }
 void TestState::Unload()
 {
@@ -127,34 +127,34 @@ void TestState::Update(float dt)
     {
         m_agent1->SetPostion({ 0, m_agent1->GetPosition().y });
     }
-    if (m_agent1->GetPosition().x > m_app->GetWindowWidth())
+    if (m_agent1->GetPosition().x > m_app->GetWindowWidth() - 10)
     {
-        m_agent1->SetPostion({ m_app->GetWindowWidth(), m_agent1->GetPosition().y });
+        m_agent1->SetPostion({ m_app->GetWindowWidth() - 10, m_agent1->GetPosition().y });
     }
     if (m_agent1->GetPosition().y < 0)
     {
         m_agent1->SetPostion({ m_agent1->GetPosition().x, 0 });
     }
-    if (m_agent1->GetPosition().y > m_app->GetWindowHeight())
+    if (m_agent1->GetPosition().y > m_app->GetWindowHeight() - 10)
     {
-        m_agent1->SetPostion({ m_agent1->GetPosition().x, m_app->GetWindowHeight() });
+        m_agent1->SetPostion({ m_agent1->GetPosition().x, m_app->GetWindowHeight() - 10 });
     }
     m_agent2->Update(dt);
     if (m_agent2->GetPosition().x < 0)
     {
         m_agent2->SetPostion({ 0, m_agent2->GetPosition().y });
     }
-    if (m_agent2->GetPosition().x > m_app->GetWindowWidth())
+    if (m_agent2->GetPosition().x > m_app->GetWindowWidth() - 10)
     {
-        m_agent2->SetPostion({ m_app->GetWindowWidth(), m_agent2->GetPosition().y });
+        m_agent2->SetPostion({ m_app->GetWindowWidth() - 10, m_agent2->GetPosition().y });
     }
     if (m_agent2->GetPosition().y < 0)
     {
         m_agent2->SetPostion({ m_agent2->GetPosition().x, 0 });
     }
-    if (m_agent2->GetPosition().y > m_app->GetWindowHeight())
+    if (m_agent2->GetPosition().y > m_app->GetWindowHeight() - 10)
     {
-        m_agent2->SetPostion({ m_agent2->GetPosition().x, m_app->GetWindowHeight() });
+        m_agent2->SetPostion({ m_agent2->GetPosition().x, m_app->GetWindowHeight() - 10 });
     }
     
     // Update Home
@@ -162,6 +162,7 @@ void TestState::Update(float dt)
 }
 void TestState::Draw()
 {
+    DrawTexture(m_image, 0,0,WHITE);
     for (auto berry : m_berries)
         berry->Draw();
     m_home->Draw();
@@ -170,12 +171,12 @@ void TestState::Draw()
     m_agent2->Draw();
 
     // Score Board;
-    std::string s = std::to_string(m_agent1->GetHealth());
+    std::string s = std::to_string(m_agent1->GetScore());
     char const* a1_score = s.c_str();
     DrawText(a1_score, 0, 0, 32, RED);
-    s = std::to_string(m_agent2->GetHealth());
+    s = std::to_string(m_agent2->GetScore());
     char const* a2_score = s.c_str();
-    DrawText(a2_score, m_app->GetWindowWidth() - 64,0 , 32, RED);
+    DrawText(a2_score, m_app->GetWindowWidth() - 64,0 , 32, GREEN);
 }
 
 std::vector<ResourceNode *>& TestState::GetBerries()

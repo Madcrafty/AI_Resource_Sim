@@ -68,6 +68,8 @@ protected:
 	bool player = false;
 	Color m_colour = GRAY;
 	float m_detectRange = 100;
+	bool m_healing = false;
+	bool m_dead = false;
 
 	int m_score = 0;
 	int m_health = 4;

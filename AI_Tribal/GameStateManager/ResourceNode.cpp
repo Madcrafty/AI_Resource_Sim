@@ -9,7 +9,19 @@
 
 ResourceNode::ResourceNode(TestState *app)  : GameObject(app)
 {
-	m_rand = 0;
+	m_rand = rand() % 8;
+	if (m_rand == 0)
+	{
+		m_image = LoadTexture("./Sprites/big_berryP_c.png");
+	}
+	else if (m_rand == 1)
+	{
+		m_image = LoadTexture("./Sprites/big_berryP2_c.png");
+	}
+	else
+	{
+		m_image = LoadTexture("./Sprites/big_berryG_c.png");
+	}
 }
 ResourceNode::~ResourceNode()
 {
@@ -33,7 +45,7 @@ void ResourceNode::Update(float deltaTime) {
 		if (m_rand == 0)
 			m_app->GetAgent(0)->AddHealth(-1);
 		m_app->GetAgent(0)->RemoveBehaviour("SeekBehaviour");
-		m_app->GetAgent(0)->AddBehaviour(new WanderBehaviour);
+		//m_app->GetAgent(0)->AddBehaviour(new WanderBehaviour);
 		delete this;
 	}
 	if (dist_agent2 < m_range)
@@ -45,12 +57,12 @@ void ResourceNode::Update(float deltaTime) {
 				m_app->GetBerries().erase(m_app->GetBerries().begin() + i);
 			}
 		}
-		if (m_rand > 0)
+		if (m_rand > 1)
 			m_app->GetAgent(1)->AddScore(1);
-		if (m_rand == 0)
+		if (m_rand <= 1)
 			m_app->GetAgent(1)->AddHealth(-1);
 		m_app->GetAgent(1)->RemoveBehaviour("SeekBehaviour");
-		m_app->GetAgent(1)->AddBehaviour(new WanderBehaviour);
+		//m_app->GetAgent(1)->AddBehaviour(new WanderBehaviour);
 		delete this;
 	}
 
@@ -63,6 +75,7 @@ void ResourceNode::Update(float deltaTime) {
 void ResourceNode::Draw()
 {
 	// call our base class draw
+	DrawTextureV(m_image, Vector2Subtract(m_position, { 16, 16 }), WHITE);
 	GameObject::Draw();
 }
 void ResourceNode::Die()
