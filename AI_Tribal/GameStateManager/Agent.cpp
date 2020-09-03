@@ -1,11 +1,20 @@
 #include "Agent.h"
+
 #include "Behaviour.h"
 #include "KeyboardBehaviour.h"`
 #include "SeekBehaviour.h"
 #include "FleeBehaviour.h"
+#include "WanderBehaviour.h"
 #include "pathfinding.h"
 
-Agent::Agent()
+#include "Graph2D.h"
+
+#include "TestState.h"
+#include "GameObject.h"
+#include "ResourceNode.h"
+#include "HealingZone.h"
+
+Agent::Agent(TestState* app) : GameObject(app)
 {}
 
 Agent::~Agent()
@@ -21,6 +30,69 @@ Vector2 Agent::Truncate(Vector2 v, float max)
 // Update the agent and its behaviours
 void Agent::Update(float deltaTime)
 {
+	if (m_dead == true)
+	{
+		return;
+	}
+	// BehaviourList Update Paramiters
+	//check if enemy agent is close
+	// if so flee from agent's postion
+	if (m_behaviourList.size() == 0)
+	{
+		AddBehaviour(new WanderBehaviour());
+	}
+	if (!FindBehaviour("SeekBehaviour") && !FindBehaviour("FollowPathBehaviour"))
+	{
+		for (auto iter : m_app->GetBerries())
+		{
+			if (Vector2Distance(m_position, iter->GetPosition()) < m_detectRange)
+			{
+				if (FindBehaviour("SeekBehaviour") == false)
+				{
+					RemoveBehaviour("WanderBehaviour");
+					AddBehaviour(new SeekBehaviour(&iter->GetPosition()));
+				}
+				//RemoveBehaviour("WanderBehaviour");
+				//AddBehaviour(new SeekBehaviour(&iter->GetPosition()));
+			}
+		}
+	}
+	if (m_health >= 4)
+	{
+		if (m_healing == true)
+		{
+			RemoveBehaviour("FollowPathBehaviour");
+			//AddBehaviour(new WanderBehaviour());
+			m_healing = false;
+		}
+	}
+	if (m_healing == false && m_health == 1)
+	{
+		if (FindBehaviour("SeekBehaviour") == true)
+		{
+			RemoveBehaviour("SeekBehaviour");
+		}
+		RemoveBehaviour("WanderBehaviour");
+		AddBehaviour(new pathfinding());
+		pathfinding* behaviour = (pathfinding*)GetBehaviour("FollowPathBehaviour");
+		std::vector<Vector2> path = m_graph->GetPath(this, m_app->GetHome()->GetPosition());
+        behaviour->SetPath(path);
+		m_healing = true;
+	}
+	if (m_healing == true && Vector2Distance(m_position, m_app->GetHome()->GetPosition()) > m_app->GetHome()->GetRange()
+		&& FindBehaviour("FollowPathBehaviour") == false)
+	{
+		AddBehaviour(new pathfinding());
+		pathfinding* behaviour = (pathfinding*)GetBehaviour("FollowPathBehaviour");
+		std::vector<Vector2> path = m_graph->GetPath(this, m_app->GetHome()->GetPosition());
+		behaviour->SetPath(path);
+	}
+	if (m_health <= 0)
+	{
+		m_dead = true;
+	}
+	
+
 	// Force is equal to zero
 	// For each Behaviour in Behaviour list
 	//	 Call the Behaviour’s Update functionand add the returned value to Force
@@ -56,6 +128,10 @@ bool Agent::FindBehaviour(const char* param)
 		{
 			return true;
 		}
+		if (dynamic_cast<WanderBehaviour*>(m_behaviourList[i]) && param == "WanderBehaviour")
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -80,6 +156,10 @@ Behaviour* Agent::GetBehaviour(const char* param)
 		{
 			return m_behaviourList[i];
 		}
+		if (dynamic_cast<WanderBehaviour*>(m_behaviourList[i]) && param == "WanderBehaviour")
+		{
+			return m_behaviourList[i];
+		}
 	}
 	return nullptr;
 }
@@ -97,6 +177,7 @@ void Agent::Draw()
 void Agent::SetPlayer()
 {
 	player = true;
+	ColourUpdate();
 }
 
 // Update colour
@@ -146,15 +227,50 @@ void Agent::RemoveBehaviour(const char* param)
 		if (dynamic_cast<KeyboardBehaviour*>(m_behaviourList[i]) && param == "KeyboardBehaviour")
 		{
 			m_behaviourList.erase(m_behaviourList.begin() + i);
+			return;
 		}
 		if (dynamic_cast<SeekBehaviour*>(m_behaviourList[i]) && param == "SeekBehaviour")
 		{
 			m_behaviourList.erase(m_behaviourList.begin() + i);
+			return;
+		}
+		if (dynamic_cast<FleeBehaviour*>(m_behaviourList[i]) && param == "FleeBehaviour")
+		{
+			m_behaviourList.erase(m_behaviourList.begin() + i);
+			return;
 		}
 		if (dynamic_cast<pathfinding*>(m_behaviourList[i]) && param == "FollowPathBehaviour")
 		{
 			m_behaviourList.erase(m_behaviourList.begin() + i);
+			return;
+		}
+		if (dynamic_cast<WanderBehaviour*>(m_behaviourList[i]) && param == "WanderBehaviour")
+		{
+			m_behaviourList.erase(m_behaviourList.begin() + i);
+			return;
 		}
 	}
 	ColourUpdate();
+}
+void Agent::AddScore(int i)
+{
+	m_score += i;
+}
+int Agent::GetScore()
+{
+	return m_score;
+}
+
+void Agent::AddHealth(int i)
+{
+	m_health += i;
+}
+int Agent::GetHealth()
+{
+	return m_health;
+}
+
+void Agent::SetGraph(Graph2D* graph)
+{
+	m_graph = graph;
 }

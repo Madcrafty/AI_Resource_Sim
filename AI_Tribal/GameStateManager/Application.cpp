@@ -6,6 +6,8 @@
 #include "MenuState.h"
 #include "PlayState.h"
 #include "PauseState.h"
+#include "TestState.h"
+#include "GameObject.h"
 
 Application::Application(int windowWidth, int windowHeight) :
 	m_windowWidth(windowWidth), m_windowHeight(windowHeight)
@@ -19,13 +21,14 @@ Application::~Application()
 
 void Application::Run()
 {
-	InitWindow(m_windowWidth, m_windowHeight, "raylib [core] example - basic window");
+	InitWindow(m_windowWidth, m_windowHeight, "Berry Nice");
 	SetTargetFPS(60);
 
 	m_gameStateManager = new GameStateManager();
+	m_gameStateManager->SetState("Test", new TestState(this)); // Load()
 	m_gameStateManager->SetState("Splash", new SplashState(this)); // Load()
 	m_gameStateManager->SetState("Menu", new MenuState(this)); // Load()
-	m_gameStateManager->SetState("Play", new PlayState(this)); // Load()
+	//m_gameStateManager->SetState("Play", new PlayState(this)); // Load()
 	m_gameStateManager->SetState("Pause", new PauseState(this)); // Load()
 
 	//m_gameStateManager->SetState("Menu", nullptr); // Unload()
@@ -55,6 +58,10 @@ void Application::Run()
 
 void Application::Update(float deltaTime)
 {
+
+	if (IsKeyPressed(KEY_TAB))
+		GameObject::SetDebugRendering(!GameObject::IsDebugRendering());
+
 	m_gameStateManager->Update(deltaTime);
 }
 void Application::Draw()

@@ -2,6 +2,7 @@
 
 // predclare classes
 class GameStateManager;
+class GameObject;
 
 class Application
 {

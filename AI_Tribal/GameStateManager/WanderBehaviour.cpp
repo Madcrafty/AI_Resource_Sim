@@ -1,5 +1,7 @@
 #include "WanderBehaviour.h"
 #include <time.h>
+#include <stdlib.h>
+#include "Agent.h"
 
 WanderBehaviour::WanderBehaviour()
 {

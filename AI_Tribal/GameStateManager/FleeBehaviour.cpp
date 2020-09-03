@@ -1,4 +1,5 @@
  #include "FleeBehaviour.h"
+#include "Agent.h"
 
 Vector2 FleeBehaviour::Update(Agent* agent, float deltaTime)
 {
