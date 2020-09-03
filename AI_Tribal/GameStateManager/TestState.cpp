@@ -76,8 +76,10 @@ void TestState::Load()
     m_agent1->AddBehaviour(new WanderBehaviour);
     m_agent1->SetPlayer();
     m_agent1->SetPostion({ m_app->GetWindowWidth(),m_app->GetWindowHeight() });
+    m_agent1->SetGraph(m_graph);
     m_agent2 = new Agent(this);
     m_agent2->AddBehaviour(new WanderBehaviour);
+    m_agent2->SetGraph(m_graph);
 
     // load home
     m_home = new HealingZone(this);

@@ -38,6 +38,7 @@ Vector2 pathfinding::Update(Agent* agent, float deltaTime)
 		{
 			m_targeting = false;
 			m_curTarget = agent->GetPosition();
+			agent->RemoveBehaviour("FollowPathBehaviour");
 		}
 	}
 	if (m_targeting == true)

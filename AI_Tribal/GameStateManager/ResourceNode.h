@@ -15,6 +15,6 @@ protected:
 private:
 	bool isDead = false;
 	Texture2D m_image;
-	float m_range = 8;
+	float m_range = 10;
 	int m_rand = 0;
 };

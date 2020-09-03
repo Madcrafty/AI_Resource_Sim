@@ -5,6 +5,7 @@
 
 class Behaviour;
 class TestState;
+class Graph2D;
 
 class Agent : public GameObject
 {
@@ -29,6 +30,8 @@ public:
 
 	// Get specific behaviour
 	Behaviour* GetBehaviour(const char* param);
+
+	void SetGraph(Graph2D* graph);
 
 	// Set as player
 	void SetPlayer();
@@ -70,6 +73,7 @@ protected:
 	float m_detectRange = 100;
 	bool m_healing = false;
 	bool m_dead = false;
+	Graph2D* m_graph;
 
 	int m_score = 0;
 	int m_health = 4;

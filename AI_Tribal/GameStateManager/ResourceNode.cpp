@@ -9,7 +9,7 @@
 
 ResourceNode::ResourceNode(TestState *app)  : GameObject(app)
 {
-	m_rand = rand() % 8;
+	m_rand = rand() % 1;
 	if (m_rand == 0)
 	{
 		m_image = LoadTexture("./Sprites/big_berryP_c.png");

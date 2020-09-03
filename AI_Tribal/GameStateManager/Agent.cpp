@@ -7,6 +7,8 @@
 #include "WanderBehaviour.h"
 #include "pathfinding.h"
 
+#include "Graph2D.h"
+
 #include "TestState.h"
 #include "GameObject.h"
 #include "ResourceNode.h"
@@ -39,7 +41,7 @@ void Agent::Update(float deltaTime)
 	{
 		AddBehaviour(new WanderBehaviour());
 	}
-	if (!FindBehaviour("SeekBehaviour"))
+	if (!FindBehaviour("SeekBehaviour") && !FindBehaviour("FollowPathBehaviour"))
 	{
 		for (auto iter : m_app->GetBerries())
 		{
@@ -59,7 +61,7 @@ void Agent::Update(float deltaTime)
 	{
 		if (m_healing == true)
 		{
-			RemoveBehaviour("SeekBehaviour");
+			RemoveBehaviour("FollowPathBehaviour");
 			//AddBehaviour(new WanderBehaviour());
 			m_healing = false;
 		}
@@ -71,13 +73,19 @@ void Agent::Update(float deltaTime)
 			RemoveBehaviour("SeekBehaviour");
 		}
 		RemoveBehaviour("WanderBehaviour");
-		AddBehaviour(new SeekBehaviour(&m_app->GetHome()->GetPosition()));
+		AddBehaviour(new pathfinding());
+		pathfinding* behaviour = (pathfinding*)GetBehaviour("FollowPathBehaviour");
+		std::vector<Vector2> path = m_graph->GetPath(this, m_app->GetHome()->GetPosition());
+        behaviour->SetPath(path);
 		m_healing = true;
 	}
 	if (m_healing == true && Vector2Distance(m_position, m_app->GetHome()->GetPosition()) > m_app->GetHome()->GetRange()
-		&& FindBehaviour("SeekBehaviour") == false)
+		&& FindBehaviour("FollowPathBehaviour") == false)
 	{
-		AddBehaviour(new SeekBehaviour(&m_app->GetHome()->GetPosition()));
+		AddBehaviour(new pathfinding());
+		pathfinding* behaviour = (pathfinding*)GetBehaviour("FollowPathBehaviour");
+		std::vector<Vector2> path = m_graph->GetPath(this, m_app->GetHome()->GetPosition());
+		behaviour->SetPath(path);
 	}
 	if (m_health <= 0)
 	{
@@ -260,4 +268,9 @@ void Agent::AddHealth(int i)
 int Agent::GetHealth()
 {
 	return m_health;
+}
+
+void Agent::SetGraph(Graph2D* graph)
+{
+	m_graph = graph;
 }
