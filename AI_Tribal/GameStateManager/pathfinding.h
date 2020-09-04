@@ -14,6 +14,7 @@ public:
 
 	virtual Vector2 Update(Agent* agent, float deltaTime);
 	virtual void Draw(Agent* agent);
+	virtual void BehaviourCheck(Agent* agent);
 
 	const std::vector<Vector2>& GetPath() const;
 	void SetPath(const std::vector<Vector2>& path);

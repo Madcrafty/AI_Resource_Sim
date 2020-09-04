@@ -1,4 +1,8 @@
 #include "pathfinding.h"
+#include "WanderBehaviour.h"
+#include "TestState.h"
+#include "HealingZone.h"
+
 #include "Agent.h"
 #include "Graph2D.h"
 
@@ -14,6 +18,7 @@ pathfinding::~pathfinding()
 
 Vector2 pathfinding::Update(Agent* agent, float deltaTime)
 {
+	BehaviourCheck(agent);
 	// if we dont have a path, than we dont need to do anything
 	if (m_path.empty())
 	{
@@ -38,7 +43,6 @@ Vector2 pathfinding::Update(Agent* agent, float deltaTime)
 		{
 			m_targeting = false;
 			m_curTarget = agent->GetPosition();
-			agent->RemoveBehaviour("FollowPathBehaviour");
 		}
 	}
 	if (m_targeting == true)
@@ -77,7 +81,7 @@ void pathfinding::SetPath(const std::vector<Vector2>& path)
 	{
 		m_path = path;
 		m_order = 0;
-		//m_curTarget = m_path.at(m_order);
+		m_curTarget = m_path.at(m_order);
 		m_targeting = true;
 	}
 }
@@ -85,4 +89,19 @@ void pathfinding::SetPath(const std::vector<Vector2>& path)
 const std::vector<Vector2>& pathfinding::GetPath() const
 {
 	return m_path;
+}
+
+void pathfinding::BehaviourCheck(Agent* agent)
+{
+	if (agent->GetHealth() >= 4)
+	{
+		agent->RemoveBehaviour("FollowPathBehaviour");
+		agent->AddBehaviour(new WanderBehaviour());
+	}
+	if (Vector2Distance(agent->GetPosition(), agent->GetApp()->GetHome()->GetPosition()) > agent->GetApp()->GetHome()->GetRange()
+		&& m_targeting == false)
+	{
+		std::vector<Vector2> path = agent->GetApp()->GetGraph()->GetPath(agent, agent->GetApp()->GetHome()->GetPosition());
+		SetPath(path);
+	}
 }

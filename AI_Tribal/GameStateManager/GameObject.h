@@ -27,6 +27,7 @@ public:
 
 	static void SetDebugRendering(bool enabled);
 	static bool IsDebugRendering();
+	TestState* GetApp();
 
 protected:
 

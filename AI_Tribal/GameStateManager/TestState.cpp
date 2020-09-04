@@ -75,11 +75,14 @@ void TestState::Load()
     m_agent1 = new Agent(this);
     m_agent1->AddBehaviour(new WanderBehaviour);
     m_agent1->SetPlayer();
-    m_agent1->SetPostion({ m_app->GetWindowWidth(),m_app->GetWindowHeight() });
-    m_agent1->SetGraph(m_graph);
+    //m_agent1->SetPostion({ m_app->GetWindowWidth(),m_app->GetWindowHeight() });
+    m_agent1->SetPostion({ 110,110 });
     m_agent2 = new Agent(this);
     m_agent2->AddBehaviour(new WanderBehaviour);
-    m_agent2->SetGraph(m_graph);
+    m_agent2->SetPostion({100,100});
+
+    m_agent1->SetFleeTarget(m_agent2);
+    m_agent2->SetFleeTarget(m_agent1);
 
     // load home
     m_home = new HealingZone(this);
@@ -208,6 +211,11 @@ HealingZone* TestState::GetHome()
     return m_home;
 }
 
+Graph2D* TestState::GetGraph()
+{
+    return m_graph;
+}
+
 void TestState::SpawnBerry(Vector2 pos)
 {
     auto berry = new ResourceNode(this);
@@ -215,4 +223,15 @@ void TestState::SpawnBerry(Vector2 pos)
 
     m_berries.push_back(berry);
 
+}
+void TestState::RemoveBerry(ResourceNode* target)
+{
+    for (size_t i = 0; i < GetBerries().size(); i++)
+    {
+        if (target == GetBerries().at(i))
+        {
+            delete target;
+            GetBerries().erase(GetBerries().begin() + i);
+        }
+    }
 }

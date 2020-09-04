@@ -9,12 +9,10 @@ public:
 	virtual void Update(float deltaTime);
 	virtual void Draw();
 
-	void Die();
+	int GetRand();
 
 protected:
 private:
-	bool isDead = false;
 	Texture2D m_image;
-	float m_range = 10;
 	int m_rand = 0;
 };

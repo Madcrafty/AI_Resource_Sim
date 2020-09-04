@@ -37,60 +37,7 @@ void Agent::Update(float deltaTime)
 	// BehaviourList Update Paramiters
 	//check if enemy agent is close
 	// if so flee from agent's postion
-	if (m_behaviourList.size() == 0)
-	{
-		AddBehaviour(new WanderBehaviour());
-	}
-	if (!FindBehaviour("SeekBehaviour") && !FindBehaviour("FollowPathBehaviour"))
-	{
-		for (auto iter : m_app->GetBerries())
-		{
-			if (Vector2Distance(m_position, iter->GetPosition()) < m_detectRange)
-			{
-				if (FindBehaviour("SeekBehaviour") == false)
-				{
-					RemoveBehaviour("WanderBehaviour");
-					AddBehaviour(new SeekBehaviour(&iter->GetPosition()));
-				}
-				//RemoveBehaviour("WanderBehaviour");
-				//AddBehaviour(new SeekBehaviour(&iter->GetPosition()));
-			}
-		}
-	}
-	if (m_health >= 4)
-	{
-		if (m_healing == true)
-		{
-			RemoveBehaviour("FollowPathBehaviour");
-			//AddBehaviour(new WanderBehaviour());
-			m_healing = false;
-		}
-	}
-	if (m_healing == false && m_health == 1)
-	{
-		if (FindBehaviour("SeekBehaviour") == true)
-		{
-			RemoveBehaviour("SeekBehaviour");
-		}
-		RemoveBehaviour("WanderBehaviour");
-		AddBehaviour(new pathfinding());
-		pathfinding* behaviour = (pathfinding*)GetBehaviour("FollowPathBehaviour");
-		std::vector<Vector2> path = m_graph->GetPath(this, m_app->GetHome()->GetPosition());
-        behaviour->SetPath(path);
-		m_healing = true;
-	}
-	if (m_healing == true && Vector2Distance(m_position, m_app->GetHome()->GetPosition()) > m_app->GetHome()->GetRange()
-		&& FindBehaviour("FollowPathBehaviour") == false)
-	{
-		AddBehaviour(new pathfinding());
-		pathfinding* behaviour = (pathfinding*)GetBehaviour("FollowPathBehaviour");
-		std::vector<Vector2> path = m_graph->GetPath(this, m_app->GetHome()->GetPosition());
-		behaviour->SetPath(path);
-	}
-	if (m_health <= 0)
-	{
-		m_dead = true;
-	}
+
 	
 
 	// Force is equal to zero
@@ -270,7 +217,34 @@ int Agent::GetHealth()
 	return m_health;
 }
 
-void Agent::SetGraph(Graph2D* graph)
+float Agent::GetRange()
 {
-	m_graph = graph;
+	return m_detectRange;
+}
+
+void Agent::Eat(ResourceNode* target)
+{
+	int m_rand = target->GetRand();
+	if (m_rand > 1)
+		AddScore(1);
+	if (m_rand <= 1)
+		AddHealth(-1);
+}
+
+void Agent::SetFleeTarget(Agent* agent)
+{
+	m_otherAgent = agent;
+}
+Agent* Agent::GetFleeTarget()
+{
+	return m_otherAgent;
+}
+
+bool Agent::IsDead()
+{
+	return m_dead;
+}
+void Agent::SetDead(bool state)
+{
+	m_dead = state;
 }

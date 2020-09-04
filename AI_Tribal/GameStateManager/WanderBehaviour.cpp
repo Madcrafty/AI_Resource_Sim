@@ -1,7 +1,17 @@
 #include "WanderBehaviour.h"
+#include "TestState.h"
+#include "Agent.h"
+#include "ResourceNode.h"
+#include "HealingZone.h"
+
+#include "SeekBehaviour.h"
+#include "pathfinding.h"
+#include "FleeBehaviour.h"
+
 #include <time.h>
 #include <stdlib.h>
 #include "Agent.h"
+#include "Graph2D.h"
 
 WanderBehaviour::WanderBehaviour()
 {
@@ -16,6 +26,7 @@ Vector2 WanderBehaviour::SetAngle(Vector2 vector, float value)
 
 Vector2 WanderBehaviour::Update(Agent* agent, float deltatime)
 {
+	BehaviourCheck(agent);
 	Vector2 velocity = agent->GetVelocity();
 	if (Vector2Length(velocity) == 0)
 	{
@@ -37,4 +48,52 @@ Vector2 WanderBehaviour::Update(Agent* agent, float deltatime)
 	//Debugging
 
 	return wanderForce;
+}
+
+void WanderBehaviour::BehaviourCheck(Agent* agent)
+{
+	if (agent->GetHealth() <= 0)
+	{
+		agent->RemoveBehaviour("WanderBehaviour");
+		agent->SetDead(true);
+		return;
+	}
+	if (agent->GetHealth() == 1)
+	{
+		if (agent->FindBehaviour("SeekBehaviour") == true)
+		{
+			agent->RemoveBehaviour("SeekBehaviour");
+		}
+		agent->RemoveBehaviour("WanderBehaviour");
+		agent->AddBehaviour(new pathfinding());
+		pathfinding* behaviour = (pathfinding*)agent->GetBehaviour("FollowPathBehaviour");
+		std::vector<Vector2> path = agent->GetApp()->GetGraph()->GetPath(agent, agent->GetApp()->GetHome()->GetPosition());
+		behaviour->SetPath(path);
+		return;
+	}
+	for (auto iter : agent->GetApp()->GetBerries())
+	{
+		if (Vector2Distance(agent->GetPosition(), iter->GetPosition()) < agent->GetRange())
+		{
+			//if (agent->FindBehaviour("SeekBehaviour") == false)
+			//{
+			//	agent->RemoveBehaviour("WanderBehaviour");
+			//	agent->AddBehaviour(new SeekBehaviour(&iter->GetPosition()));
+			//}
+			agent->RemoveBehaviour("WanderBehaviour");
+			agent->AddBehaviour(new SeekBehaviour(iter));
+			return;
+		}
+	}
+	if (Vector2Distance(agent->GetPosition(), agent->GetFleeTarget()->GetPosition()) < agent->GetRange())
+	{
+		//if (agent->FindBehaviour("SeekBehaviour") == false)
+		//{
+		//	agent->RemoveBehaviour("WanderBehaviour");
+		//	agent->AddBehaviour(new SeekBehaviour(&iter->GetPosition()));
+		//}
+		agent->RemoveBehaviour("WanderBehaviour");
+		agent->AddBehaviour(new FleeBehaviour(agent->GetFleeTarget()));
+		return;
+	}
 }

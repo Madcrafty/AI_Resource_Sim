@@ -6,6 +6,7 @@
 class Behaviour;
 class TestState;
 class Graph2D;
+class ResourceNode;
 
 class Agent : public GameObject
 {
@@ -31,8 +32,6 @@ public:
 	// Get specific behaviour
 	Behaviour* GetBehaviour(const char* param);
 
-	void SetGraph(Graph2D* graph);
-
 	// Set as player
 	void SetPlayer();
 
@@ -44,9 +43,24 @@ public:
 
 	// Add health
 	void AddHealth(int i);
-
 	// Get health
 	int GetHealth();
+	
+	//Eat Berry
+	void Eat(ResourceNode* target);
+
+	// Get detect range
+	float GetRange();
+
+	// Set Flee Target
+	void SetFleeTarget(Agent* target);
+	// Get Flee Target
+	Agent* GetFleeTarget();
+
+	// Get Dead State
+	bool IsDead();
+	// Set Dead State
+	void SetDead(bool state);
 	// Movement functions
 	//void SetPosition(Vector2 position) { m_position = position; }
 	//Vector2 GetPosition() { return m_position; }
@@ -70,10 +84,10 @@ protected:
 	float m_maxSpeed = 100;
 	bool player = false;
 	Color m_colour = GRAY;
+	Agent* m_otherAgent;
 	float m_detectRange = 100;
 	bool m_healing = false;
 	bool m_dead = false;
-	Graph2D* m_graph;
 
 	int m_score = 0;
 	int m_health = 4;

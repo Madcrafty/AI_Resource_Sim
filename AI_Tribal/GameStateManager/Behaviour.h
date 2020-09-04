@@ -15,4 +15,5 @@ public:
 	virtual Vector2 Update(Agent* agent, float deltaTime) = 0;
 
 	virtual void Draw(Agent* agent) {}
+	virtual void BehaviourCheck(Agent* agent) {};
 };

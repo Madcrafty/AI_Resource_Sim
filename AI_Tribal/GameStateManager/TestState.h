@@ -30,6 +30,8 @@ public:
 	HealingZone* GetHome();
 
 	void SpawnBerry(Vector2 pos);
+	Graph2D* GetGraph();
+	void RemoveBerry(ResourceNode* target);
 
 protected:
 private:

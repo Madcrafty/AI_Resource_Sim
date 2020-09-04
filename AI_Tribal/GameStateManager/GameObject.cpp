@@ -75,3 +75,7 @@ bool GameObject::IsDebugRendering()
 {
 	return ms_debugDraw;
 }
+TestState* GameObject::GetApp()
+{
+	return m_app;
+}
